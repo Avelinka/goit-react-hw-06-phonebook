@@ -61,3 +61,8 @@ export const DeleteBtn = styled.button`
     -moz-box-shadow: 3px 3px 15px 1px ${p => p.theme.colors.shadowblue};
   }
 `;
+
+export const NoContacts = styled.p`
+  font-size: 20px;
+  text-align: center;
+`;

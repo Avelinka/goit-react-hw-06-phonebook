@@ -1,6 +1,11 @@
+import { useDispatch, useSelector } from 'react-redux';
+
+import { getContacts } from '../../redux/selectors';
+import { addContact } from '../../redux/contactSlice';
+
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { nanoid } from 'nanoid';
+import toast from 'react-hot-toast';
 
 import { BsFillPersonFill } from 'react-icons/bs';
 import { BsTelephoneFill } from 'react-icons/bs';
@@ -32,7 +37,24 @@ const сontactSchema = Yup.object().shape({
     .required('Required'),
 });
 
-export const ContactForm = ({ onAddContact }) => {
+export const ContactForm = () => {
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
+
+  const onAddContact = newContact => {
+    const isExist = contacts.some(
+      ({ name, number }) =>
+        name.toLowerCase().trim() === newContact.name.toLowerCase().trim() ||
+        number.trim() === newContact.number.trim()
+    );
+
+    if (isExist) {
+      return toast.error(`${newContact.name}: is already in contacts`);
+    }
+
+    dispatch(addContact(newContact));
+  };
+
   return (
     <Formik
       initialValues={{
@@ -41,7 +63,7 @@ export const ContactForm = ({ onAddContact }) => {
       }}
       validationSchema={сontactSchema}
       onSubmit={(values, actions) => {
-        onAddContact({ id: nanoid(), ...values });
+        onAddContact({ ...values });
         actions.resetForm();
       }}
     >
